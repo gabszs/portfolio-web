@@ -11,6 +11,7 @@ Here I talk about topics such as:
 - Advanced Python features and tips, such as asyncio and async programming
 - DevOps automation (I’m also a huge fan of GitOps and CI/CD pipelines)
 - Web APIs (REST, for example)
+- Message Queues (RabbitMQ)
 - Containers and Kubernetes
 - Professional tips
 - Communication and life hacks

@@ -26,11 +26,17 @@ jobs:
         username: ${{ env.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ${{ env.IMAGE_NAME }}:$(date +%s)
-
-    - name: Push the Docker image to Docker Hub
+    - name: Build Docker Image
+      id: build-image
+      env:
+        IMAGE_NAME: ${{ env.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}
+        TIMESTAMP_TAG: $(date +%s)
       run: |
-        IMAGE_TAG=$(date +%s)
-        docker tag ${{ env.IMAGE_NAME }}:$IMAGE_TAG ${{ env.DOCKER_HUB_USERNAME }}/{{ env.IMAGE_NAME }}:latest
-        docker push ${{ env.DOCKER_HUB_USERNAME }}/{{ env.IMAGE_NAME }}:latest
+        docker build -t $IMAGE_NAME:latest -t $IMAGE_NAME:$TIMESTAMP_TAG .
+
+    - name: Docker Images
+      run: docker images
+
+    - name: Tag and Push Docker Image to Docker Hub
+      run: |
+        docker push ${{ env.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }} --all-tags

@@ -3,34 +3,33 @@ layout: ../layouts/AboutLayout.astro
 title: "About"
 ---
 
-AstroPaper is a minimal, responsive and SEO-friendly Astro blog theme. I designed and crafted this based on [my personal blog](https://satnaing.dev/blog).
+Hello! I'm Gabriel Carvalho, 
+a back-end developer with experience in building and automating complex processes. I specialize in Python and C#, but my enthusiasm for DevOps has driven me to create my own homelab to host applications.
 
-This theme is aimed to be accessible out of the box. Light and dark mode are supported by
-default and additional color schemes can also be configured.
+Here I talk about topics such as:
+- Homelabbing
+- Advanced Python features and tips, such as asyncio and async programming
+- DevOps automation (I’m also a huge fan of GitOps and CI/CD pipelines)
+- Web APIs (REST, for example)
+- Containers and Kubernetes
+- Professional tips
+- Communication and life hacks
 
-This theme is self-documented \_ which means articles/posts in this theme can also be considered as documentations. So, see the documentation for more info.
+I currently work as an software engineer at Huawei, where I've developed internal tools and automations for processes like payment systems and employee management, saving over $50K through efficient solutions. 
 
-<div>
-  <img src="/assets/dev.svg" class="sm:w-1/2 mx-auto" alt="coding dev illustration">
-</div>
+I'm dedicated to continuous improvement, effective communication (with a focus on NLP), and aligning with company values. I'm always looking to expand my skills and contribute to innovative projects.
 
 ## Tech Stack
 
-This theme is written in vanilla JavaScript (+ TypeScript for type checking) and a little bit of ReactJS for some interactions. TailwindCSS is used for styling; and Markdown is used for blog contents.
+Here are the main technologies used in my development stack:
 
-## Features
+- Python (FastAPI, Pandas, Selenium)
+- C#
+- Cloud services (Huawei Cloud, AWS)
+- Containerization with Docker and Kubernetes
+- PostgreSQL & Redis for data management
+- Automation with RabbitMQ and CI/CD using GitHub Actions
+- Virtualization using Proxmox
+- Unix/Linux environments
 
-Here are certain features of this site.
-
-- fully responsive and accessible
-- SEO-friendly
-- light & dark mode
-- fuzzy search
-- super fast performance
-- draft posts
-- pagination
-- sitemap & rss feed
-- highly customizable
-
-If you like this theme, you can star/contribute to the [repo](https://github.com/satnaing/astro-paper).  
-Or you can even give any feedback via my [email](mailto:contact@satnaing.dev).
+If you like one of my posts, had any feedback or question, you can send me a message on [whatsapp](https://wa.me/5511947047830) or [email](mailto:gabrielcarvalho.workk@gmail.dev).

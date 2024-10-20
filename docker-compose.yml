@@ -4,9 +4,8 @@ services:
   app:
     image: gabzsz/portfolio-web:latest
     ports:
-      - 4321:4321
+      - 4321:80
     working_dir: /app
-    command: npm run dev -- --host 0.0.0.0
     volumes:
       - ./:/app
     restart: unless-stopped

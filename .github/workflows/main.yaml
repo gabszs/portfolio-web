@@ -25,3 +25,7 @@ jobs:
         with:
           push: true
           tags: ${{ vars.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+          
+      - name: Trigger Portainer Webhook
+        run: |
+          curl -X POST ${{ secrets.PORTAINER_WEBHOOK_URL }}

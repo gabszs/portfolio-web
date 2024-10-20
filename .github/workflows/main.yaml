@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 
 env:
-    IMAGE_NAME: gateway_converter
+    IMAGE_NAME: portfolio-web
 
 jobs:
   build:

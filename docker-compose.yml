@@ -7,3 +7,5 @@ services:
       - 4321:80
     working_dir: /app
     restart: unless-stopped
+    env_file:
+      - stack.env

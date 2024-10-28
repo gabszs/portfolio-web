@@ -14,7 +14,7 @@ tags:
   - cloud
   - digital-ocean
   - deploy-series
-description: "capRover: easily deploy your apps and apis in containers"
+description: "easily deploy your containers"
 ---
 
 Deploy series: in this first episode, we going to cover a basic deploy of docker containers using capRover, DigitalOcean Droplet (VPS) and cloudflare for our DNS. 
@@ -24,7 +24,6 @@ Often when developing apis with fastapi, or many other frameworks, we need to de
 To standardize this, more than just use Docker, we can utilize tools to manage our container environment; in this case, CapRover. So let’s dive into it.
 
 ## Table of contents
-
 ## requirements
 
 - For this post, I assume that you already have a VPS instance ON, in this blog we going to use the digitalOcean droplets. You can feel free to test this tutorial in any online VPS provider, for the cheapest one, I recommend Contabo or Hetzner.

@@ -14,7 +14,7 @@ tags:
   - cloud
   - digital-ocean
   - deploy-series
-description: "easily deploy your containers"
+description: "a easy way deploy your apis and websites with your domain"
 ---
 
 Deploy series: in this first episode, we going to cover a basic deploy of docker containers using capRover, DigitalOcean Droplet (VPS) and cloudflare for our DNS. 

@@ -1,6 +1,6 @@
 ---
 author: Gabriel Carvalho
-pubDatetime: 2024-10-19T23:30:41.816Z
+pubDatetime: 2024-10-28T21:47:46.329Z
 title: "deploy series 01: deploy your containers with capRover."
 slug: "deploy-series-caprover-container"
 featured: true
@@ -151,9 +151,7 @@ Congratulations, your container is deployed, and also, your server, so you can a
 
 For this Api, you can check the final result in this [link](https://password-svc.portfile.dev/docs)
 
-Try building asynchronous code yourself, and you'll notice that you can significantly improve your code's efficiency by hundreds, if not thousands, of times.
-
-Later, I'll post more content about container and apps deploy, tackling content and technologies such as portainer, kubernetes, rancher, argoCD (gitops), so stay up to new posts. 
+Later, I'll post more content about container and apps deploy, tackling content and technologies such as portainer, kubernetes, rancher, argoCD (gitops), so stay in track to new posts. 
 
 And if you like the post, had any feedback or question, you can send me a message on [whatsapp](https://wa.me/5511947047830) or [email](mailto:gabrielcarvalho.workk@gmail.dev).
 

@@ -81,36 +81,36 @@ npm install -g caprover
 ### Config capRover server
 
 1. to start the capRover config, type:
->```bash
->caprover serversetup
->```
+```bash
+caprover serversetup
+```
 
 2. Type "Y":
-> ![caprover serversetup](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*kyjYCXcyS7JUo8xw.png)
+![caprover serversetup](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*kyjYCXcyS7JUo8xw.png)
 
 3. Type your droplet Public IP:
-> ![ip pin](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*Wc97-DGcyNUeeyYI.png)
+![ip pin](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*Wc97-DGcyNUeeyYI.png)
 
 4. Type the DNS record that you created in cloudflare (without the "*."):
-> ![domain](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*a1vypF6WDcSIKXIr.png)
+![domain](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*a1vypF6WDcSIKXIr.png)
 
 5. Create a new password for capRover server:
-> ![password setup](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*S53YmcIhbH-KcGWr.png)
+![password setup](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*S53YmcIhbH-KcGWr.png)
 
 6. Type a valid email for free TLS certificate, to late enable HTTPS:
-> ![email](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*7i-APsDKqnksNe2o.png)
+![email](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*7i-APsDKqnksNe2o.png)
 
 7. and finally, type the name for your caprover server (you can simply type capRover):
-> ![server name](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*QTrMtb2uUSr11kyw.png)
+![server name](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*QTrMtb2uUSr11kyw.png)
 
 8. Caprover will spin up the management server, and generate a public link for access:
-> ![caprover link](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*HkXAJWFb9vPpwUWZ.jpeg)
+![caprover link](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*HkXAJWFb9vPpwUWZ.jpeg)
 
 ### Create a new app
 
-> Caprover manages to hold many apps, so, you can deploy as many containers as you want. We have this app concept, an abstraction of the deployment environment, where you create a new container, defines the port where its running, enable https, websockets and manage de reverse proxy config, for this tutorial, we going to use a very simple app config.
-
 After getting the public management server URL, fallow these [Instructions](https://app.tango.us/app/workflow/Setting-Up-a-APP-in-capRover-373f60dd1afb45eeb0c7f050835da8ec) to create a simple app that we going to user in future container deployment.
+
+> Caprover manages to hold many apps, so, you can deploy as many containers as you want. We have this app concept, an abstraction of the deployment environment, where you create a new container, defines the port where its running, enable https, websockets and manage de reverse proxy config, for this tutorial, we going to use a very simple app config.
 
 ### Clone the repo and Deploy the container
 
@@ -132,16 +132,16 @@ cd FastApi--Password-Generator
 caprover deploy
 ```
 3. so, select you caprover instance where the container will be deployed (since we only configured one, you can check the only option)
-> ![caprover instance](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*o2P9d5VTYQBq0uud.png)
+![caprover instance](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*o2P9d5VTYQBq0uud.png)
 
 4. Select an app to host the container, since we created a one called password, lets going to select the password
-> ![app selection](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*1cnClAb7Z_JtWUPb.png) 
+![app selection](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*1cnClAb7Z_JtWUPb.png) 
 
 5. Caprover will ask you about which branch to watch, select the default one, also, it will alert you that any files marked in gitignore will not be pulled into the server, than, type "Y"
-> ![branch selection](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*t3z9FMkv9SAlnCZb.png)
+![branch selection](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*t3z9FMkv9SAlnCZb.png)
 
 6. Caprover will build the container, and them, deploy it into the your domain, in the end, it will display the final URL, where you can check your deployment
-> ![Final URL](https://miro.medium.com/v2/resize:fit:1212/format:webp/0*mwo2-Xurzsx-z926.png)
+![Final URL](https://miro.medium.com/v2/resize:fit:1212/format:webp/0*mwo2-Xurzsx-z926.png)
 
 
 ## Conclusion

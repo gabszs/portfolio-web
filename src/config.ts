@@ -6,7 +6,7 @@ export const SITE: Site = {
   profile: "https://www.linkedin.com/in/gabzsz/",
   desc: "My Personal blog to describe my adventures into Code World.",
   title: "Gabriel Carvalho",
-  ogImage: "astropaper-og.jpg",
+  ogImage: "shanghai-street.jpg",
   lightAndDarkMode: true,
   postPerIndex: 4,
   postPerPage: 3,

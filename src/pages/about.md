@@ -3,7 +3,7 @@ layout: ../layouts/AboutLayout.astro
 title: "About"
 ---
 
-![myself, I, me](https://r2.gabrielcarvalho.dev/profile/gabriel.jpeg)
+
 
 Hello! I'm Gabriel Carvalho, 
 a back-end developer with experience in building and automating complex processes. I specialize in Python and C#, but my enthusiasm for DevOps has driven me to create my own homelab to host applications.
@@ -34,5 +34,7 @@ Here are the main technologies used in my development stack:
 - Automation with RabbitMQ and CI/CD using GitHub Actions
 - Virtualization using Proxmox
 - Unix/Linux environments
+
+![myself, I, me](https://r2.gabrielcarvalho.dev/profile/gabriel.jpeg)
 
 If you like one of my posts, had any feedback or question, you can send me a message on [whatsapp](https://wa.me/5511947047830) or [email](mailto:gabrielcarvalho.workk@gmail.dev).

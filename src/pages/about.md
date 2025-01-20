@@ -3,6 +3,8 @@ layout: ../layouts/AboutLayout.astro
 title: "About"
 ---
 
+![myself, I, me](https://r2.gabrielcarvalho.dev/profile/gabriel.jpeg)
+
 Hello! I'm Gabriel Carvalho, 
 a back-end developer with experience in building and automating complex processes. I specialize in Python and C#, but my enthusiasm for DevOps has driven me to create my own homelab to host applications.
 

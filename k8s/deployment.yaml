@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: personal-blog-deployment
+  namespace: personal-blog
+spec:
+  selector:
+    matchLabels:
+      app: personal-blog-app
+
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: personal-blog-app
+    spec:
+      containers:
+      - name: personal-blog
+        image: gabzsz/portfolio-web:0.1.0
+        ports:
+        - containerPort: 80
+
+

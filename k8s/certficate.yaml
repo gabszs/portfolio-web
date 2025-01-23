@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: gabrielcarvalho
+  namespace: personal-blog
+spec:
+  secretName: gabrielcarvalho-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  commonName: "k8s.gabrielcarvalho.dev"
+  dnsNames:
+  - "k8s.gabrielcarvalho.dev"
+

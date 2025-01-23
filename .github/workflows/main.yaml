@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 
 env:
-    IMAGE_NAME: portfolio-web
+    IMAGE_NAME: gabzsz/portfolio-web
 
 jobs:
   build:
@@ -34,8 +34,28 @@ jobs:
         with:
           push: true
           tags: |
-            ${{ vars.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
-            ${{ vars.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+
+      - name: Checkout GitOps Branch
+        run: |
+          git fetch origin
+          git checkout gitops
+
+      - name: Update Image Tag in Deployment
+        run: |
+          sed -i "s|image: gabzsz/portfolio-web:.*|image: gabzsz/portfolio-web:${{ env.VERSION }}|" k8s/deployment.yaml
+
+      - name: Git Config
+        run: |
+          git config --global user.email "ci-bot@ci.com"
+          git config --global user.name "CI Bot"
+
+      - name: Commit and Push Changes
+        run: |
+          git add k8s/deployment.yaml
+          git commit -m "Updating the image tag: ${VERSION}"
+          git push origin gitops
 
       - name: Trigger Portainer Webhook
         run: |

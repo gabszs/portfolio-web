@@ -235,7 +235,35 @@ config:
         enable_json_type: "1"
 ```
 
-Three topics, one consumer group. If the consumer lags (traffic burst, ClickHouse slow), the autoscaler adds pods and Kafka redistributes partitions automatically.
+Three topics, one consumer group. If the consumer lags (traffic burst, ClickHouse slow), the HPA adds pods and Kafka redistributes partitions across them automatically.
+
+### Self-scaling without manual intervention
+
+When `autoscaling.enabled: true`, the Helm chart creates a Kubernetes `HorizontalPodAutoscaler` targeting the consumer Deployment. You don't manage replicas — the cluster does.
+
+The loop is simple:
+
+1. Traffic spikes → consumer CPU rises above 65%
+2. HPA detects it and increases the replica count
+3. New consumer pods join the same consumer group (`otel-kafka-consumer`)
+4. Kafka rebalances partitions across the new pods
+5. Throughput goes up, CPU drops, HPA stabilizes
+
+Scale-down follows the same logic in reverse. When traffic drops, pods are removed and partitions are consolidated — all without touching any config.
+
+The only thing you need to set is the right `requests.cpu`. HPA calculates utilization as `current CPU / requests.cpu`, so if `requests` is too low, the HPA thinks the pod is always at 100% and scales aggressively; too high, and it never scales. The `500m` request with a `2` limit gives a comfortable range for the consumer's workload at ~1k events/s.
+
+```bash
+# watch the HPA in action during a load test
+kubectl get hpa -n observability -w
+```
+
+```
+NAME                      REFERENCE                    TARGETS         MINPODS   MAXPODS   REPLICAS
+otel-consumer             Deployment/otel-consumer     12%/65%         1         10        1
+otel-consumer             Deployment/otel-consumer     71%/65%         1         10        2
+otel-consumer             Deployment/otel-consumer     38%/65%         1         10        2
+```
 
 ### Processors: more than just batching
 
@@ -422,7 +450,7 @@ telemetrygen traces \
 
 That's the title in practice. The pipeline handles it with the consumer autoscaling, Kafka absorbing bursts in S3, and ClickHouse batching inserts. The nodes stay small.
 
-![telemetrygen running in terminal alongside resource usage monitoring](/posts/open-telemetry-part-1/complete-trace.png)
+![telemetrygen running in terminal alongside resource usage monitoring](/posts/scaling-observability-billions-s3/telemetry-gen.png)
 *telemetrygen pushing 1k events/s — terminal output on the left, collector CPU/RAM on the right*
 
 After a few minutes, verify in ClickHouse:

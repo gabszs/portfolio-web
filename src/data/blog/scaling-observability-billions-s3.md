@@ -47,6 +47,8 @@ Apps (any language, any SDK)
 
 Three signals, one path. Logs, traces and metrics flow through the same pipeline — separate Kafka topics (`otel-logs`, `otel-traces`, `otel-metrics`), same consumer, same ClickHouse cluster.
 
+The backend here is ClickHouse, but the Kafka layer is backend-agnostic. You could swap the consumer's exporter for Grafana LGTM (Loki, Tempo, Mimir), Datadog, Elasticsearch, or any OTLP-compatible destination without touching the producers or the broker. The collector is just a pipe.
+
 ---
 
 ## AutoMQ: Kafka without the disk problem
@@ -171,18 +173,32 @@ The collector is split into two deployments with very different resource profile
 
 ```yaml
 resources:
-  requests: { cpu: 100m, memory: 256Mi }
-  limits:   { cpu: 500m, memory: 512Mi }
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
 
 config:
   exporters:
     kafka:
-      brokers: [automq-kafka.automq.svc.cluster.local:9092]
-      logs:    { topic: otel-logs,    encoding: otlp_json }
-      metrics: { topic: otel-metrics, encoding: otlp_json }
-      traces:  { topic: otel-traces,  encoding: otlp_json }
+      brokers:
+        - automq-kafka.automq.svc.cluster.local:9092
+      logs:
+        topic: otel-logs
+        encoding: otlp_json
+      metrics:
+        topic: otel-metrics
+        encoding: otlp_json
+      traces:
+        topic: otel-traces
+        encoding: otlp_json
       auth:
-        sasl: { username: user1, password: "<kafka-password>", mechanism: SCRAM-SHA-256 }
+        sasl:
+          username: user1
+          password: "<kafka-password>"
+          mechanism: SCRAM-SHA-256
       producer:
         compression: zstd    # meaningful savings on structured JSON payloads
         required_acks: 1     # broker confirms receipt, doesn't wait for S3 flush
@@ -192,8 +208,12 @@ config:
 
 ```yaml
 resources:
-  requests: { cpu: 500m, memory: 1Gi }
-  limits:   { cpu: "2",  memory: 2Gi }
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: "2"
+    memory: 2Gi
 
 autoscaling:
   enabled: true
@@ -216,6 +236,41 @@ config:
 ```
 
 Three topics, one consumer group. If the consumer lags (traffic burst, ClickHouse slow), the autoscaler adds pods and Kafka redistributes partitions automatically.
+
+### Processors: more than just batching
+
+The `batch` processor is the obvious one, but the `resource` processor is where the pipeline gets interesting.
+
+In the consumer, you can tag every signal with where it's coming from:
+
+```yaml
+processors:
+  resource/cluster_meta:
+    attributes:
+      - key: k8s.cluster.name
+        value: prod-k3s
+        action: insert
+      - key: telemetry.pipeline
+        value: kafka-consumer
+        action: insert
+```
+
+This is useful when multiple environments share the same ClickHouse cluster — you can filter by `k8s.cluster.name` at query time without needing separate tables.
+
+You can also use Kafka topics to route different signals to different pipelines. One topic per environment, one per team, or separate topics for high-volume signals that need their own consumer group:
+
+```yaml
+exporters:
+  kafka:
+    logs:
+      topic: otel-logs-team-a      # team A routes here
+    traces:
+      topic: otel-traces-prod
+    metrics:
+      topic: otel-metrics-prod
+```
+
+The consumer group handles the rest — add consumer pods for high-volume topics, keep low-volume ones sharing instances.
 
 ---
 
@@ -253,9 +308,7 @@ ORDER BY (ServiceName, toDateTime(Timestamp), Timestamp)
 SETTINGS storage_policy = 's3_main', index_granularity = 8192;
 ```
 
-The otel-collector-contrib ClickHouse exporter supports JSON natively with `json: true`. You don't change the pipeline config — just the schema and the `enable_json_type` connection param.
-
-The full schema (all 7 tables: logs, traces, 5 metric types, plus the trace ID lookup) is at [github.com/gabszs/oteland/blob/master/k8s/clickhouse/schema/otel.sql](https://github.com/gabszs/oteland/blob/master/k8s/clickhouse/schema/otel.sql).
+The otel-collector-contrib ClickHouse exporter supports JSON natively with `json: true` — you don't change the pipeline config, just the schema and the `enable_json_type` connection param. The full schema (all 7 tables: logs, traces, 5 metric types, plus the trace ID lookup) is at [github.com/gabszs/oteland/blob/master/k8s/clickhouse/schema/otel.sql](https://github.com/gabszs/oteland/blob/master/k8s/clickhouse/schema/otel.sql).
 
 ### The trace ID lookup table
 
@@ -346,6 +399,7 @@ kubectl create secret generic clickhouse-logging-creds \
 - **Three signals, one pipeline** — logs, traces and metrics share the same infrastructure. No separate cluster per signal type.
 - **ClickHouse scales independently** — add shards for write throughput, add replicas for read concurrency. Storage doesn't move.
 - **AutoMQ native telemetry** — the broker pushes its own JVM, S3 and stream metrics via OTLP directly into the pipeline.
+- **Chainable collectors** — the collector is designed to be put behind other collectors. Each team runs its own instance with its own config and routes to the central Kafka cluster. The Kafka + consumer layer handles storage at scale; individual teams only manage their own instrumentation. No team needs to think about where the data lands.
 
 ---
 

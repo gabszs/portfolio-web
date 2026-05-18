@@ -451,7 +451,7 @@ telemetrygen traces \
 That's the title in practice. The pipeline handles it with the consumer autoscaling, Kafka absorbing bursts in S3, and ClickHouse batching inserts. The nodes stay small.
 
 ![telemetrygen running in terminal alongside resource usage monitoring](/posts/scaling-observability-billions-s3/telemetry-gen.png)
-*telemetrygen pushing 1k events/s — terminal output on the left, collector CPU/RAM on the right*
+*telemetrygen pushing 1k events/s — terminal output on the right, collector CPU/RAM on the left*
 
 After a few minutes, verify in ClickHouse:
 

@@ -16,6 +16,7 @@ tags:
   - metrics
   - logs
 description: "How to build a production-grade observability pipeline using OpenTelemetry Collector, AutoMQ, and ClickHouse — with logs, traces and metrics all stored on S3."
+ogImage: "https://r2.gabrielcarvalho.dev/DIAGRAM.png"
 ---
 
 Storing observability data at scale has a dirty secret: the bottleneck is almost never the query engine. It's disk. Managed Kafka clusters with large retention, ClickHouse nodes with terabytes of attached storage, replication across disks that cost a fortune — all to handle data that's written constantly but read rarely.
@@ -477,6 +478,8 @@ If you see `otel-kafka-loadtest-logs` in the results, the full pipeline is worki
 - **ClickHouse scales independently** — add shards for write throughput, add replicas for read concurrency. Storage doesn't move.
 - **AutoMQ native telemetry** — the broker pushes its own JVM, S3 and stream metrics via OTLP directly into the pipeline.
 - **Chainable collectors** — the collector is designed to be put behind other collectors. Each team runs its own instance with its own config and routes to the central Kafka cluster. The Kafka + consumer layer handles storage at scale; individual teams only manage their own instrumentation. No team needs to think about where the data lands.
+
+![arch diagram](/posts/scaling-observability-billions-s3/DIAGRAM.png)
 
 ---
 

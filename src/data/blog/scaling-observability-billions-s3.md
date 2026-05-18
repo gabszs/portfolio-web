@@ -5,13 +5,16 @@ title: "Scaling Observability to Billions (on S3)"
 slug: "scaling-observability-billions-s3"
 featured: true
 tags:
-  - opentelemetry
+  - open-telemetry
   - clickhouse
   - kafka
   - automq
   - s3
   - observability
   - kubernetes
+  - traces
+  - metrics
+  - logs
 description: "How to build a production-grade observability pipeline using OpenTelemetry Collector, AutoMQ, and ClickHouse — with logs, traces and metrics all stored on S3."
 ---
 

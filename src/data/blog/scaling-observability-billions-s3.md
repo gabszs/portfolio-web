@@ -392,6 +392,52 @@ kubectl create secret generic clickhouse-logging-creds \
 
 ---
 
+## Testing the pipeline
+
+Once everything is up, the fastest way to validate the full path — producer → Kafka → consumer → ClickHouse — is `telemetrygen`, the official load generator from the OTel contrib repo.
+
+```bash
+go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest
+```
+
+Then fire all three signal types in parallel:
+
+```bash
+telemetrygen logs \
+  --otlp-endpoint 192.168.1.112:4318 --otlp-http --otlp-insecure \
+  --duration 5m --rate 333 --service otel-kafka-loadtest-logs &
+
+telemetrygen metrics \
+  --otlp-endpoint 192.168.1.112:4318 --otlp-http --otlp-insecure \
+  --duration 5m --rate 333 --service otel-kafka-loadtest-metrics &
+
+telemetrygen traces \
+  --otlp-endpoint 192.168.1.112:4318 --otlp-http --otlp-insecure \
+  --duration 5m --rate 333 --service otel-kafka-loadtest-traces &
+```
+
+333 logs/s + 333 metrics/s + 333 traces/s = **~1000 events/s across all three signals**. Run that for a month and you get:
+
+> **1000 × 86,400 × 31 = 2,678,400,000 — over 2.6 BILLION events/month**
+
+That's the title in practice. The pipeline handles it with the consumer autoscaling, Kafka absorbing bursts in S3, and ClickHouse batching inserts. The nodes stay small.
+
+![telemetrygen running in terminal alongside resource usage monitoring](/posts/open-telemetry-part-1/complete-trace.png)
+*telemetrygen pushing 1k events/s — terminal output on the left, collector CPU/RAM on the right*
+
+After a few minutes, verify in ClickHouse:
+
+```sql
+SELECT count(), ServiceName
+FROM default.otel_logs
+WHERE Timestamp > now() - INTERVAL 10 MINUTE
+GROUP BY ServiceName;
+```
+
+If you see `otel-kafka-loadtest-logs` in the results, the full pipeline is working.
+
+---
+
 ## Why this stack?
 
 - **Cheap retention** — S3 at ~$0.023/GB vs $0.08–0.12/GB for SSD. Ninety days of traces without thinking about it.

@@ -25,6 +25,6 @@ Here are the main technologies used in my development stack:
 - Virtualization using Proxmox
 - Unix/Linux environments
 
-![myself, I, me](https://r2.gabrielcarvalho.dev/profile/gabriel.jpeg)
+![myself, I, me](https://r2.gabrielcarvalho.dev/profile/cowbow.png)
 
 If you like one of my posts, had any feedback or question, you can send me a message on [whatsapp](https://wa.me/5511947047830) or [email](mailto:gabrielcarvalho.workk@gmail.dev).

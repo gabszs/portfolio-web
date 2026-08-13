@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: personal-blog
-        image: gabzsz/portfolio-web:4.7.2
+        image: gabzsz/portfolio-web:481bb045
         ports:
         - containerPort: 80
 

@@ -4,6 +4,10 @@ on:
   push:
     branches: ["main"]
 
+# Necessario para o push do bump de tag na branch gitops
+permissions:
+  contents: write
+
 env:
   IMAGE_NAME: gabzsz/portfolio-web
 
@@ -11,52 +15,58 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # fetch-depth: 0 traz todas as branches — sem isso o checkout da gitops
+      # mais abaixo nao encontra a ref
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Resolve image tag from commit SHA
+        run: echo "TAG=$(git rev-parse --short=8 HEAD)" >> "$GITHUB_ENV"
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ vars.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Extract version from package-lock.json
-        id: get-version
-        run: |
-          VERSION=$(jq -r '.version' package-lock.json)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+        uses: docker/setup-buildx-action@v4
 
       - name: Build and push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: true
           tags: |
             ${{ env.IMAGE_NAME }}:latest
-            ${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+            ${{ env.IMAGE_NAME }}:${{ env.TAG }}
 
-      - name: Checkout GitOps Branch
+      - name: Update image tag on gitops branch
         run: |
-          git fetch origin
-          git checkout gitops
+          set -euo pipefail
+          git config user.email "ci-bot@ci.com"
+          git config user.name "CI Bot"
+          git fetch origin gitops
+          git checkout -B gitops origin/gitops
 
-      - name: Update Image Tag in Deployment
-        run: |
-          sed -i "s|image: gabzsz/portfolio-web:.*|image: gabzsz/portfolio-web:${{ env.VERSION }}|" k8s/deployment.yaml
+          sed -i "s|image: ${IMAGE_NAME}:.*|image: ${IMAGE_NAME}:${TAG}|" k8s/deployment.yaml
 
-      - name: Git Config
-        run: |
-          git config --global user.email "ci-bot@ci.com"
-          git config --global user.name "CI Bot"
+          if git diff --quiet k8s/deployment.yaml; then
+            echo "::error::sed nao alterou k8s/deployment.yaml — confira se a linha 'image: ${IMAGE_NAME}:' existe"
+            exit 1
+          fi
 
-      - name: Commit and Push Changes
-        run: |
           git add k8s/deployment.yaml
-          git commit -m "Updating the image tag: ${VERSION}"
+          git commit -m "chore(deploy): image ${TAG}"
           git push origin gitops
 
       - name: Trigger Portainer Webhook
+        env:
+          WEBHOOK: ${{ secrets.PORTAINER_WEBHOOK_URL }}
         run: |
-          curl -X POST ${{ secrets.PORTAINER_WEBHOOK_URL }}
+          if [ -n "$WEBHOOK" ]; then
+            curl -fsS -X POST "$WEBHOOK"
+          else
+            echo "PORTAINER_WEBHOOK_URL nao configurado — pulando"
+          fi
